@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Servicios Web">
+    <meta name="author" content="Manuel Medina Rosa">
+    <title>Correo Electrónico</title>
+    <link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="../css/estilo.css">
+    <link rel="stylesheet" type="text/css" href="../css/mi_css.css">
+
+  </head>
+
+  <body>
+     <div class="inner clearfix">
+        <h3 class="masthead-brand"><a class="nav-link" href="../index.html">SERVICIOS EN RED</a></h3>
+        <nav class="nav nav-masthead">
+            <a class="nav-link " href="./Practica_Servicio_Correo_Electronico.html">Correo Electronico</a>
+            <a class="nav-link" href="./ftp.html">FTP</a>
+            <a class="nav-link active" href="./Practica_Servicio_Web.html">Servicios Web</a>
+        </nav>
+     </div>
+    <h1>PRÁCTICA SERVICIO WEB</h1>
+    <h3>Índice</h3>
+     <ul>
+         <li><a href="#crear_contenedor">Crear contenedor</a></li>
+         <li><a href="#apache">Apache</a></li>
+         <li><a href="#virtual_hosts">Virtual Hosts</a></li>
+         <li><a href="#digest">Digest</a></li>
+         <li><a href="#ssl">SSL</a></li>
+         <li><a href="#squid">Squid</a></li>
+         <li><a href="#dansguardian">Dansguardian</a></li>
+
+     </ul>
+    <h3 id="crear_contenedor">Crear contenedor</h3>
+        <p>Nos metemos en Docker Hub y buscamos Ubuntu y al entrar seleccionaremos la ultima versión LTS</p>
+        <figure><img src="../img/Apache/1-version_dockerhub.png" alt="version"></figure>
+       
+        <p>Nos llevará a un repositorio de github y pincharemos en el botón que dice raw y lo guardaremos, se nos descargará un archivo nombrado dockerfile.txt. Lo meteremos en una carpeta que creemos especifamente para ello.</p>
+        <figure><img src="../img/Apache/2-Pinchar_en_Raw_descargar.png" alt="descargar"></figure>
+       
+        <p>Como se puede ver en el Dockerfile este depende de un archivo .tar.gz que tendremos que descargar del mismo repositorio. Nos iriamos a la carpeta padre dentro del github y desde ahi lo descargaremos. Lo metemos en la misma carpeta que el dockerfile.</p>
+        <figure><img src="../img/Apache/3-archivo_tar.png" alt="descargar"></figure>
+        
+        <p>Ahora ya podríamos crear la imagen con <span class="comando">docker build</span> desde dentro del directorio donde tenemos e el Dockerfile y el archivo .tar.gz:</p>
+        <p class="comando">docker build -t appl-servicios</p>
+        
+        <figure><img class="small_size" src="../img/Apache/Error.png" alt="Error"></figure>
+        <p>(Me sale este error que no pude solucionar, usé docker pull como sustitución)</p>
+
+        <p>Una vez creada la imagen procedemos a crear el contenedor con <span class="comando">docker run</span>>,  yo lo nombré app-servicios</p>
+        <figure><img src="../img/Apache/4-Crear_contenedor.png" alt="crear_contenedor"></figure>
+      
+        <p>Para entrar al contenedor y poder ejecutar comandos en el usariamos el comando:</p>
+        <p class="comando">docker exec -ti app-servicios /bin/bash</p>
+        <p>Después de ello es recomendable la primera vez realizar un <span class="comando">apt update</span>apt update  y un <span class="comando">apt upgrade</span></p>
+
+    <h3 id="apache">Apache</h3>
+        <p>Instalamos apache con el comando apt install apache2</p>
+        <figure><img src="../img/Apache/5-Instalar_Apache.png" alt="instalar_apache"></figure>
+
+        <p>Para iniciar apache utilizariamos el comando <span class="comando">apache2ctl start</span></p>
+
+        <p>Y una vez iniciado ya podríamos acceder desde nuestro navegador introduciendo la ip del contenedor. Para cambiar la página principal bastaría con cambiar el index.html que hay dentro de /var/www/html/</p>
+        <figure><img src="../img/Apache/7-Cambiar_index.png" alt="cambiar_index"></figure>
+
+        <p>Ahora si quisieramos conectarnos atraves una url y no ip tendriamos que editar los archivos /etc/hosts tanto del anfitrion como del contenedor</p>
+        <figure><img src="../img/Apache/8-Hosts_url_apache.png" alt="url_apache"></figure>
+        <figure><img src="../img/Apache/9-url.png" alt="url"></figure>
+
+    <h3 id="virtual_hosts">Virtual Hosts</h3>
+        <p>Añadimos una entradas en /etc/hosts del contenedor y del anfitrión con el nombre de los servernames que vayamos a tener para crear los virtualhosts.</p>
+        <figure><img src="../img/Apache/10_VirtualHosts.png" alt="VirtualHosts"></figure>
+
+        <p>En el archivo /etc/apache/sites-available/000-default.com/ establecemos el virtualhost principal, tenemos que cambiar y descomentar el Servername y el serveradmin debemos cambiarlo también con la dirección que pusimos para el virtualhost </p>
+        <figure><img src="../img/Apache/11-archivo_configuracion_virtualhosts.png" alt="configuracion_virtualhosts"></figure>
+
+        <p>Ya si escribimos en mi caso por ejemplo <span class="comando">www.virtual.lan</span> en la barra de navegación nos cargaría nuestra página principal.</p>
+        <figure><img src="../img/Apache/12-check.png" alt="check_VirtualHosts"></figure>
+
+        <p>Copiamos el archivo de configuración del sitio y le ponemos el nombre de la otra dirección que pusimos para poder identificarlo fácilmente. Lo editamos como el anterior pero con la dirección nueva. La diferencia en este es que la dirección de DocumenRoot debemos cambiarlo por el nuevo nombre</p>
+        <figure><img src="../img/Apache/13-copia_archivo.png" alt="copia_archivo_VirtualHosts"></figure>
+
+        <p>En /var/www creamos una carpeta con el nombre que hemos puesto en el DocumentRoot del archivo anterior. Y copiamos el archivo index.html de la carpeta html que hay en la misma ruta en la carpeta creada o bien creamos el archivo desde 0 pero con el nombre index.html siempre</p>
+        <figure><img src="../img/Apache/14-Copia_index.png" alt="copia_index_VirtualHosts"></figure>ç
+
+        <p>Luego ejecutamos el comando <span class="comando">a2ensite</span> y elegimos los 2 archivos de configuracion que tenemos para los virtualhosts y ejecutamos el comando que nos dice: <span class="comando">service apache2 reload</span></p>
+        <figure><img src="../img/Apache/15-a2ensite.png" alt="a2ensite_VirtualHosts"></figure>
+
+        <p>Y ya tendrían que funcionar las páginas</p>
+        <figure><img src="../img/Apache/16-VirtualHosts.png" alt="prueba_VirtualHosts"></figure>
+
+    <h3 id="digest">Digest</h3>
+        <p>Para añadir protección a nuestras páginas y estas soliciten una contraseña, deberemos activar el módulo auth_digest y luego configurarlo. Por tanto lo activamos con <span class="comando">a2enmod auth_digest</span> y reiniciamos el servicio apache2</p>
+        <figure><img src="../img/Apache/17-Activar_Digest.png" alt="activar_digest"></figure>
+
+        <p>Con el comando <span class="comando">htdigest -c</span> creamos el archivo digest en /var/www con la frase restringido y el usuario necron23 en mi caso</p>
+        <figure><img src="../img/Apache/18-Crear_digest.png" alt="crear_digest"></figure>
+
+        <p>Ahora creamos una carpeta en uno de los directorios de los VirtualHosts y ahi añadimos otro archivo index.html</p>
+        <figure><img src="../img/Apache/19-secreto.png" alt="secreto_digest"></figure>
+
+        <p>En el archivo de configuracion del sitio debemos añadir la siguiente entrada:<br>
+            &#60;Directory /var/www/virtual23/secreto&#62;<br>
+            AuthType digest<br>
+            AuthName "restringido"<br>
+            AuthUserFile /var/www/digest<br>
+            Require valid-user<br>
+            &#60;/Directory&#62;<br>
+            Una vez hecho reiniciamos el servicio otra vez</p>
+        <figure><img src="../img/Apache/20-archivo_configuracion.png" alt="configuracion_digest"></figure>
+
+        <p>Y ahora comprobariamos intentando acceder desde el navegador</p>
+        <figure><img src="../img/Apache/21-Comprobación_digest.png" alt="comprobación_digest"></figure>
+
+        <p>Si ponemos el usuario y contraseña correctos nos debe dejar acceder</p>
+        <figure><img src="../img/Apache/22-comprobacion_digest_2.png" alt="comprobacion2_digest"></figure>
+
+
+    <h3 id="ssl">SSL</h3>
+
+        <p>Lo primero de nada tenemos que ver si tenemos disponible el módulo para ssl en /etc/apache2/mod-available en el caso de que no estuviese tendríamos que instalarlo.<br>
+        Si está ejecutamos a2enmod ssl para habilitarlo</p>
+        <figure><img src="../img/Apache/23-Activar_SSL.png" alt="activar_ssl"></figure>
+
+        <p>Haciendo un nmap al servidor podemos comprobar que está funcionando si el puerto 443 esta abierto</p>
+        
+        <p>Para que no nos prohiba el navegador entrar a nuestra página por https deberemos generar nuestro certificado para el. Empezaremos con la llave rsa.<br>
+            Primero creamos una carpeta llamada ssl en el directorio de apache2 donde albergar todos los archivos para el certificad.<br>
+            Luego creamos la llave rsa dentro con el comando:</p>
+        <p class="comando">openssl genrsa -out virtual23.lan.key 4096</p>
+        <p>Cambiar “virtual23.lan” por el sitio de cada uno</p>
+        <figure><img src="../img/Apache/25-clave_rsa.png" alt="clave_ssl"></figure>
+        
+        <p>Ahora procedemos con el certificado csr:</p>
+        <p class="comando">openssl req -new -key virtual23.lan.key -out virtual23.lan.csr </p>
+        <p>Le decimos cree un nuevo certificado llamado virtual23.lan.csr utilizando la llave que creamos anteriormente. Y luego tendremos que rellenar información del certificado </p>
+        <figure><img src="../img/Apache/26-certificado_csr.png" alt="certificado_csr"></figure>
+
+        <p>Ahora deberemos generar el certificado crt:</p>
+        <p class="comando">openssl x509 -req -days 365 -in virtual23.lan.csr  -signkey virtual23.lan.key -out virtual23.lan.crt</p>
+        <p>Yo lo he generado de 365 días pueden ser de cuantos se quiera, con mi certificado csr y mi llave</p>
+        <figure><img src="../img/Apache/27-certificado_crt.png" alt="certificado_crt"></figure>
+
+        <p>El contenido del archivo .crt generado antes lo exportamos a un archivo .crt también en nuestro anfitrión</p>
+        <figure><img src="../img/Apache/28-exportar_crt.png" alt="exportar_crt"></figure>
+
+        <p>Ahora deberemos configurar el archivo /etc//apache2/sites-available/default-ssl.conf cambiamos el ServerAdmin, DocumentRoot, SSLCertificateFile por la ruta donde esta nuestro certificado crt y SSLCertificateKeyFe por la ruta donde esta nuestra llave. Y debemos añadir el ServerName nosotros. Y ahora deberemos activar el sitio  con a2ensite como hicimos con los VirtualHosts para hacerlo mas comodo escribimos un * y se activaran todos incluidos el ssl. Y reiniciamos el servicio una vez más.</p>
+        <figure><img src="../img/Apache/29-configuración_ssl.png" alt="configuracion_ssl"></figure>
+
+        <p>Si lo hemos hecho bien nos tendría que aparecer este mensaje cuando quisieramos entrar. Para entrar o bien podemos darle a Avanzado y aceptar el riesgo y nos dejaría o bien podemos importar nosotros nuestro certificado desde la configuración. Aunque existe el riesgo que aún importando el certificado nos de un error por autofirmarlo nosotros.</p>
+        <figure><img src="../img/Apache/30-ssl_working.png" alt="working_ssl"></figure>
+
+        <p>Y una vez le demos a aceptar el riesgo nos debe dejar entrar.</p>
+        <figure><img src="../img/Apache/32-entrar_paginassl.png" alt="entrar_ssl"></figure>
+
+        <h3 id="squid">Squid</h3>
+        <p>Instalamos squid con <span class="comando">apt install squid</span> y luego vamos a preparar el archivo de configuración para que sea cómodo.<br>
+        Primero hacemos una copia del archivo de squid.conf y luego mediante una tuberia con <span class="comando">grep -v</span> eliminamos las lineas que empiecen por # y lo pasamos al documento squid.conf1 y a este con <span class="comando">awk ‘NF’</span> al archivo squid.conf1 le eliminamos los espacios en blanco y ya lo pasamos al archivo squid.conf.</p>
+        <figure><img src="../img/Squid-Dansguardian/1-Preparar_ArchivoSquid.png" alt="preparar_squid"></figure>
+
+        <p>Ahora en el archivo de configuración añadimos las siguientes entradas:</p>
+        <p><span class="comando">acl mired src 172.17.0.0/16:</span> Esta servirá para establecer como “mired” a la red del contenedor</p>
+        <p><span class="comando">acl documentos urlpath_regex \.pdf(\?.*)?$ \.PDF(\?.*)?$:</span> Esta servirá para establecer como “documentos” los archivos que se establecen ahí</p>
+        <p><span class="comando">http_access deny documentos:</span> Esta sirve para prohibir “documentos” por tanto no podremos descargar ni acceder a páginas que sean del tipo de esos documentos establecidos</p>
+        <p><span class="comando">http_access allow mired:</span> Esta sirve para permitir el acceso a “mired”, es decir, poder conectarnos con usando esa red</p>
+        <p>Ya guardaríamos e iniciaríamos el servicio con <span class="comando">/etc/init.d/squid start</span></p>
+        <figure><img src="../img/Squid-Dansguardian/2-configurar_squid.png" alt="configurar_squid"></figure>
+
+        <p>En el navegador tenemos que configurar el proxy con la IP del contenedor y el puerto estandar de squid 3128. Si funciona correctamente nos debe dejar navegar y si no, nos saldría que el proxy esta bloqueando la conexión.</p>
+        <figure><img src="../img/Squid-Dansguardian/3-Establecer_proxy.png" alt="establecer_proxy"></figure>
+
+        <p>Y si está bien configurado nos debe bloquear el acceso a archivos .pdf como hemos establecido antes</p>
+        <figure><img src="../img/Squid-Dansguardian/4-Bloqueo_PDF.png" alt="bloqueo_pdf"></figure>
+
+    <h3 id="dansguardian">Dansguardian</h3>
+         <p>Instalamos dansguardian con apt install dansguardian en el mismo contenedor donde este squid puesto que estos se complementan. Para configurarlo basta con que en el archivo de congifuracion dansguardian.conf comentemos o borremos la linea que dice: </p>
+         <p class="comando">UNCONFIGURED - Please remove this line after configuration</p>
+
+         <figure><img src="../img/Squid-Dansguardian/5-Configurar_Dansguardian.png" alt="configurar_dansguardian"></figure>
+
+         <p>Iniciamos dansguardian con /etc/init.d/dansguardian y  squid y configuramos el proxy ahora con el puerto 8080 que es con el que funciona dansguardian. Y ya configurando las listas de dansguardian prohibiremos el acceso a unas páginas u otras, atraves de filtros de dominio, url, ip, palabras...</p>
+         <figure><img src="../img/Squid-Dansguardian/6-Dansguardian.png" alt="dansguardian"></figure>
+
+
+
+    <div class="mastfoot">
+            <div class="inner">
+              <p>By Manuel Medina Rosa <a href="https://twitter.com/necron_23" target="_blank">@necron_23</a>.</p>
+            </div>
+    </div>
+
+    <script src="../js/jquery-3.3.1.min.js"></script>
+    <script src="../js/popper.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+  </body>

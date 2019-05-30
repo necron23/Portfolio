@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Servidor Correo">
+    <meta name="author" content="Manuel Medina Rosa">
+    <title>Correo Electrónico</title>
+    <link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="../css/estilo.css">
+    <link rel="stylesheet" type="text/css" href="../css/mi_css.css">
+
+  </head>
+
+  <body>
+     <div class="inner clearfix">
+        <h3 class="masthead-brand"><a class="nav-link" href="../index.html">SERVICIOS EN RED</a></h3>
+        <nav class="nav nav-masthead">
+            <a class="nav-link active" href="./Practica_Servicio_Correo_Electronico.html">Correo Electronico</a>
+            <a class="nav-link" href="./ftp.html">FTP</a>
+            <a class="nav-link" href="./Practica_Servicio_Web.html">Servicios Web</a>
+        </nav>
+     </div>
+    <h1>PRÁCTICA CORREO ELECTRONICO</h1>
+    
+    <h3>Crear y exponer puertos</h3>
+    <p>En el momento que creamos el contenedor debemos especificar también que puertos queremos exponer</p>
+
+    <figure><img class="small_size" src="../img/Correo/Puertos_Expuestos1.png" alt="exponer puertos"></figure>
+
+    <h3>FQDN</h3>
+    <p>Ponemos los mismos FQDN en <span class="comando">/etc/hosts</span>tanto del host como del contenedor</p>
+    
+    <figure><img src="../img/Correo/FQDN.png" alt="fqdn"></figure>
+
+    <h3>Instalación y configuración</h3>
+     <p>Primero instalaremos postfix con el comando:</p>
+     <p class="comando">apt install postfix</p>
+     <p>Durante la instalación nos dirá como lo queremos establecer y elegiremos <span class="comando">internet-site</span></p>
+     <p>Después procederemos a instalar dovecot usaremos el meta paquete "mail-stack-delivery" que viene ya preparado para que funcione dovecot con postfix directamente sin tener que hacer nada</p>
+     <p class="comando">apt install mail-stack-delivery</p>
+     <p>Tras ello crearemos un par de usuarios en el contenedor con <span class="comando">adduser</span></p>
+     <p> Y ya podriamos iniciar los servicios</p>
+
+     <figure><img src="../img/Correo/Usuarios_Instalacion.png" alt="usuarios_instalacion"></figure>
+    
+     <p>Una vez iniciados los servicios podemos comprobar que funcionan desde Thunderbird mismo, cuando introduzcamos los usuarios nos pedirá asegurar que confiamos en ellos debido a que no tienen certificado</p>
+     <p>Una vez hecho eso podemos mandar un correo el uno al otro y comprobar que funciona perfectamente</p>
+
+     <figure><img src="../img/Correo/correo_enviado.png" alt="prueba"></figure>
+
+     <p>Miguel Robles y yo estuvimos intentando mandarnos correos entre nosotros pero no lo llegamos a lograr, añadimos cada uno nuestros FQDN a nuestros hosts pero no tenemos ni idea de como hacerlo funcionar tras muchas pruebas</p>
+    <div class="mastfoot">
+            <div class="inner">
+              <p>By Manuel Medina Rosa <a href="https://twitter.com/necron_23" target="_blank">@necron_23</a>.</p>
+            </div>
+    </div>
+
+    <script src="../js/jquery-3.3.1.min.js"></script>
+    <script src="../js/popper.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+  </body>

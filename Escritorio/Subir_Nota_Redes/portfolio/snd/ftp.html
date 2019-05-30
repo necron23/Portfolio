@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Servidor FTP">
+    <meta name="author" content="Manuel Medina Rosa">
+    <title>FTP</title>
+    <link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="../css/estilo.css">
+    <link rel="stylesheet" type="text/css" href="../css/mi_css.css">
+
+  </head>
+
+  <body>
+     <div class="inner clearfix">
+        <h3 class="masthead-brand"><a class="nav-link" href="../index.html">SERVICIOS EN RED</a></h3>
+        <nav class="nav nav-masthead">
+            <a class="nav-link" href="./Practica_Servicio_Correo_Electronico.html">Correo Electronico</a>
+            <a class="nav-link active" href="./ftp.html">FTP</a>
+            <a class="nav-link" href="./Practica_Servicio_Web.html">Servicios Web</a>
+        </nav>
+     </div>
+    <h1>PRÁCTICA FTP</h1>
+    <h3>Crear contenedor</h3>
+    <p>Primero descargamos el repositorio de Github con:</p>
+    <p class="comando">git clone https://github.com/epoweripione/docker-vsftpd-alpine.git</p>
+
+    <p>Luego entramos a la carpeta clonada desde la terminal y ejecutamos:</p>
+    <p class="comando">docker-compose up -d</p>
+
+    <figure><img src="../img/ftp/docker-compose_up_-d.png" alt="docker-compose"></figure>
+
+    <p>Con esto se nos creará el contenedor docker con el vsftpd</p>
+
+    <p>Si mirásemos el archivo docker-compose.yml con el que hemos creado el contenedor podemos ver que ya se exponen los puertos, en el caso que no lo hiciese solo sería añadirlos nosotros. Añado imagen del archivo. </p>
+
+    <figure><img src="../img/ftp/archivo_docker-compose.yml.png" alt="archivo docker compose"></figure>
+
+    <p>Yo en mi caso voy a renombrar el contenedor para que se ajuste al solicitado en  la práctica: </p>
+    <p class="comando">docker rename nombre_antiguo nombre_nuevo</p>
+
+    <figure><img src="../img/ftp/Renombrar_contenedor.png" alt="renombrar"></figure>
+
+    <h3>Administrador</h3>
+    <p>Siguiendo las instrucciones del autor de github cambiaremos la contraseña del administrador</p>
+
+    <figure><img class="small_size" src="../img/ftp/Cambiar_contraseña" alt="cambiar password"></figure>
+
+    <p>Con echo añadiremos la linea siguiente a el, que es la que alberga la contraseña que en este caso la cambie por “123456” y la sobreescribiremos en el archivo <span class="comando">/etc/vsftpd/virtual_users</span></p>
+    <p>Ahora vamos a editar algunos ajustes y permisos como son de escritura, creación de carpetas y la dirección de su carpeta en el servidor del usuario admin</p>
+
+    <p>Los incluimos con el comando <span class="comando">cat</span></p>
+    <figure><img src="../img/ftp/Permisos_Admin.png" alt="permisos admin"></figure>
+
+    <h3>Añadir usuarios</h3>
+
+    <p>Para añadir un usuarios es como cuando cambiamos la contraseña al administrador puesto lo que hacemos es añadir las lineas o editarlas directamente tanto con <span class="comando">echo</span> o con <span class="comando">cat</span>, la única diferencia es que debemos crearles una carpeta en el servidor:</p>
+  
+    <figure><img src="../img/ftp/usuario_necron_creado.png" alt="crear usuarios"></figure>
+
+    <p>Creamos la carpeta con mkdir -p para evitar errores, puesto que -p crea los directorios padre en el caso que no existiesen. Y el resto igual a cuando Admin, solo que cambiandolo por el usuario "necron23" que ha sido el que he creado </p>
+
+    <p>Ya podríamos conectarnos al servidor con cualquiera de nuestros usuarios y podriamos perfectamente descargar y subir archivos</p>
+
+    <figure><img src="../img/ftp/Transferencias_satisfactorias.png" alt="Transferencias"></figure>
+
+    <div class="mastfoot">
+            <div class="inner">
+              <p>By Manuel Medina Rosa <a href="https://twitter.com/necron_23" target="_blank">@necron_23</a>.</p>
+            </div>
+    </div>
+
+    <script src="../js/jquery-3.3.1.min.js"></script>
+    <script src="../js/popper.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+  </body>

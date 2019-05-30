@@ -1,0 +1,41 @@
+body{
+    text-align: left;
+}
+img{
+    width: 43.75rem;
+    height: 18.75rem;
+    border: 1px solid red;
+}
+h1{
+    color: red;
+    font-size: 2.375rem;
+}
+h3{
+    color: rgb(233, 55, 55);
+    
+}
+.comando{
+    font-weight: bold;
+    color: #428cf4;
+}
+/*Fotos pequeña resolucion*/
+.small_size{
+    width: 43.75rem;
+    height: 3.125rem;
+}
+/*Footer deslizante*/
+.mastfoot{
+    text-align: right;
+    margin-left: 500px;
+    color: blueviolet;
+}
+/*Menu de arriba*/
+.masthead{
+    background-color: #333;
+}
+
+.masthead-brand{
+    font-size: 2.5rem;
+    
+
+}
